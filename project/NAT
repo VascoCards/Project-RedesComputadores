@@ -1,0 +1,82 @@
+nat estatico
+
+BR2_R1
+	
+	ip nat inside source static 10.200.0.1 209.100.10.4
+	
+	int g0/0
+	ip nat inside
+	exit
+	
+	int go/2
+	ip nat outside
+	exit
+	
+	
+	wr
+	
+	show ip nat translations
+	
+	
+	
+	
+	
+----------------------------------------------------
+
+BR1_R1
+
+
+int g0/1
+ip nat outside
+
+access-list 1 permit 10.200.0.0 0.0.255.255
+
+int g0/0
+ip nat inside
+
+exit
+
+ip nat inside source list 1 interface g0/1 overload
+
+
+show ip nat translations
+
+
+------------------------------------------------------
+
+HQ_R1
+
+
+
+int g0/2
+ip nat outside
+access-list 2 permit 10.200.0.0 0.0.255.255
+
+int g0/0
+ip nat inside
+
+exit
+
+ip nat inside source list 2 interface g0/2 overload
+
+
+ip nat inside source static tcp 10.200.4.10 1194 10.200.4.200 1194
+------------------------------------------
+
+HO_R1
+
+
+
+int g0/0
+ip nat outside
+
+access-list 3 permit 192.168.1.0 0.0.0.255
+
+
+int g0/1
+ip nat inside
+exit
+
+ip nat inside source list 3 interface g0/0 overload
+
+

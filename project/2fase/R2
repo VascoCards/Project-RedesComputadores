@@ -1,0 +1,32 @@
+R2
+
+
+router ospf 1 
+network 13.13.13.0 0.0.0.255 area 0
+network 2.2.2.2 0.0.0.0 area 0
+
+int loopback2
+ip add 2.2.2.2 255.255.255.255
+
+default-information originate 
+
+v
+
+router bgp 12353
+neighbor 24.24.24.2 remote-as 6939
+neighbor 5.5.5.5 remote-as 12353
+network 2.2.2.2 mask 255.255.255.255
+
+#Deverá preferir as rotas anunciadas pelo router R2 às anunciadas pelo router R5
+
+bgp default local-preference 100
+
+
+#menor metric mais prioridade
+#O 6939 deve ser persuadido pelo 12353 a preferir as rotas do router R2 às rotas do router R5
+
+route-map setmetricout 
+set metric 200
+exit
+router bgp 12353
+neighbor 24.24.24.2 route-map setmetricout out

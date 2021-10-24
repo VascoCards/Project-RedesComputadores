@@ -1,0 +1,50 @@
+DHCP
+
+20 IoT
+10 private
+1 guest + estaticos
+
+R1
+// private
+ip dhcp excluded-address 192.168.1.1 192.168.1.10
+
+//IoT
+ip dhcp excluded-address 192.168.1.129 192.168.1.149
+
+//guest
+ip dhcp excluded-address 192.168.1.193 192.168.1.196
+
+-------------------------------------
+ip dhcp pool R2G2
+network 192.168.1.192 255.255.255.224 
+
+default_router 192.168.1.193
+dns-server 8.8.8.8
+--------------------------------------
+
+ip dhcp pool R2G1
+network 192.168.1.128 255.255.255.192
+
+default-router 192.168.1.129
+dns-server 8.8.8.8
+-------------------------------------------
+
+ip dhcp pool R2G3
+network 192.168.1.0 255.255.255.128
+
+default-router 192.168.1.1
+dns-server 8.8.8.8
+-------------------------------
+
+
+R2
+
+int g0/1
+ip helper-address 192.168.1.226
+
+int g0/2
+ip helper-address 192.168.1.226
+
+int g0/3
+ip helper-address 192.168.1.226
+

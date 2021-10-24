@@ -1,0 +1,43 @@
+R5
+
+
+router ospf 1 
+network 14.14.14.0 0.0.0.3 area 2
+network 5.5.5.5 0.0.0.0 area 2
+
+
+int loopback5
+ip add 5.5.5.5 255.255.255.255
+
+#anunciar rota por defeito para a internet
+default-information originate
+v
+
+router bgp 12353
+neighbor 25.25.25.2 remote-as 6939
+neighbor 26.26.26.2 remote-as 174
+network 5.5.5.5 mask 255.255.255.255
+
+v
+
+#Deverá preferir as rotas anunciadas pelo router R2 às anunciadas pelo router R5
+
+bgp default local-preference 200
+
+
+#Router R5 deve preferir as rotas anunciadas pelo router R6 às anunciadas pelo router R7
+
+neighbor 25.25.25.2 weight 200
+neighbor 26.26.26.2 weight 100
+
+
+
+#menor metric mais prioridade
+#O AS 6939 deve ser persuadido pelo AS 12353 a preferir as rotas do router R5 às rotas do router R2
+
+route-map setmetricout 
+set metric 100
+exit
+router bgp 12353
+neighbor 25.25.25.2 route-map setmetricout out
+

@@ -1,0 +1,16 @@
+R3
+
+
+router ospf 1 
+network 14.14.14.0 0.0.0.3 area 2
+network 13.13.13.0 0.0.0.255 area 0
+network 3.3.3.3 0.0.0.0 area 0
+
+int loopback3
+ip add 3.3.3.3 255.255.255.255
+
+v
+
+router bgp 12353
+network 3.3.3.3 mask 255.255.255.255
+

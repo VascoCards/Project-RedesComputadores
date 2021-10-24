@@ -1,0 +1,11 @@
+
+
+int loopback6
+ip add 6.6.6.6 255.255.255.255
+v
+
+router bgp 6939
+neighbor 46.46.46.2 remote-as 174
+neighbor 25.25.25.1 remote-as 12353
+neighbor 24.24.24.1 remote-as 12353
+network 6.6.6.6 mask 255.255.255.255

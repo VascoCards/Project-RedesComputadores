@@ -1,0 +1,90 @@
+1) impedir trafego com origem em gest atinja IoT
+
+	-basic ACL
+	
+	192.168.1.192/27  .1100 0000
+	
+	mask: 255.255.255.224
+	
+	1) criar ACL:
+	
+	access-list 10 deny 192.168.1.192 0.0.0.31
+	access-list permit any
+	
+	
+	
+	2) atribuir ACL:
+	
+	HO_R2
+	int g0/1
+	ip access-group 10 out
+	
+	
+	
+2) Trafego com origem HQ_R2 g0/1 e destino HQ_R1 g0/0 apenas se destinado ao servidor vpn:
+
+	HQ_R1
+	g0/1
+	access-list 101 permit tcp 10.200.0.0 0.0.3.255 host 10.200.4.10 eq 1194   
+	access-list 102 permit udp 10.200.0.0 0.0.3.255 host 10.200.4.10 eq 1194
+	
+	access-list 101 deny ip any host 10.200.4.10
+	access-list 102 deny ip any host 10.200.4.10
+	access-list 101 permit ip any any
+	access-list 102 permit ip any any
+	
+	ip access-group 101 in
+	ip access-group 102 in
+	
+	
+
+3) permitir trafego entre IoT e private , apenas quando inicia em private
+	
+	HO_R2
+	ip access-list extended outbnd_acl
+	permit ip any any reflect ip-traffic timeout 10
+	exit
+	
+	ip access-list extended inbnd_acl
+	evaluate ip-traffic
+	exit
+	end
+	
+	
+	int g0/1
+	ip access-group outbnd_acl out
+	ip access-group inbnd_acl in
+	
+	
+	
+	
+4) permitir apenas a HO_PC1 aceder a HO_FTP via ssh (porta 22)
+
+	HO_R1
+	g0/1
+	access-list 102 permit tcp host 192.168.1.11 host 192.168.1.5 eq 22
+	   
+	access-list 102 deny ip any host 192.168.1.5 
+	int g0/1
+	ip access-group 102 in
+
+
+
+
+
+5) Apenas tráfego com origem em HQ ou BR1 deve ser permitido.
+
+	
+	BR2_R1
+	
+	int g0/2
+	 ip access-group 101 in
+	 ip access-group 102 in
+	 
+	 
+	 access-list 101 permit ip 10.200.0.0 0.0.255.255 10.200.0.0 0.0.255.255
+	 
+	 access-list 102 permit ip 10.20.0.0 0.0.255.255 10.200.0.0 0.0.255.255
+	 
+	 
+	

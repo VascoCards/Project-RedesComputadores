@@ -1,0 +1,46 @@
+HO_R1
+
+int g0/0
+ip nat outside
+
+int g0/1
+ip nat inside
+
+ip access-list standard ho1
+permit 192.168.1.0 0.0.0.255
+
+ip nat inside source list ho1 int g0/0 overload
+
+
+HQ_R1
+
+int g0/2
+ip nat outside
+
+int g0/1
+ip nat inside
+
+ip access-list standard hq1
+permit 10.200.0.0 0.0.255.255
+
+ip nat inside source list hq1 int g0/2 overload
+
+ip nat inside source static tcp 10.200.4.10 1194 10.200.4.200 1194
+
+
+
+BR1_R1
+
+int g0/1
+ip nat outside
+
+int g0/0
+ip nat inside
+
+ip access-list standard br1
+permit 10.20.0.0 0.0.255.255
+
+
+ip nat inside source list br1 int g0/1 overload
+
+

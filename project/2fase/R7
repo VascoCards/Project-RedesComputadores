@@ -1,0 +1,12 @@
+
+
+int loopback7
+ip add 7.7.7.7 255.255.255.255
+
+
+
+
+router bgp 174
+neighbor 46.46.46.1 remote-as 6939
+neighbor 26.26.26.1 remote-as 12353
+network 7.7.7.7 mask 255.255.255.255

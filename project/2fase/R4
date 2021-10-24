@@ -1,0 +1,46 @@
+R4
+
+
+router ospf 1 
+network 12.12.12.0 0.0.0.3 area 1
+network 4.4.4.4 0.0.0.0 area 1
+
+
+int loopback4
+ip add 4.4.4.4 255.255.255.255
+
+router ospf 1
+ Area 1 nssa
+ 
+ v
+ 
+ 
+router bgp 12353
+network 4.4.4.4 mask 255.255.255.255
+
+
+
+---------------------
+ip vrf blue
+rd 12353:100
+route-target export 12353:100
+route-target import 12353:100????????
+
+int loopback4
+ip vrf forwarding blue
+//ip add 4.4.4.4 255.255.255.255
+
+router ospf 2 vrf blue
+router-id 4.4.4.3 255.255.255.255
+
+int loopback4
+ip ospf 2 area 1
+
+neighbor 1.1.1.1 update-source 4.4.4.4
+
+address-family vpnv4
+neighbor 1.1.1.1 activate
+neighbor 1.1.1.1 send-community extended
+
+address-family ipv4 vrf blue
+redistribute ospf 2
